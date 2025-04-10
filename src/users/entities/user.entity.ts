@@ -1,6 +1,8 @@
-import { Column, Entity, JoinColumn, ManyToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Profile } from "./profile.entity";
 import { Post } from "src/posts/entities/post.entity";
+import { Role } from "src/roles/entities/role.entity";
+
 @Entity({ name: 'users' })
 export class User {
     @PrimaryGeneratedColumn()
@@ -23,5 +25,9 @@ export class User {
     profile: Profile
 
     @ManyToMany(() => Post, post => post.author ) //muchos a muchos
-    posts: Post[]
+    posts: Post [];
+
+    @ManyToMany(()=> Role, role => role.users) //muchos a muchos
+    @JoinTable({ name: 'users_roles' })
+    roles: Role [];
 }
