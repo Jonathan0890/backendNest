@@ -6,6 +6,14 @@ import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { AuthModule } from './auth/auth.module';
 import { RolesModule } from './roles/roles.module';
+import { GradeModule } from './grade/grade.module';
+import { GruopModule } from './group/group.module';
+import { SubjectModule } from './subject/subject.module';
+import { ScheduleModule } from './schedule/schedule.module';
+import { AttendanceModule } from './attendance/attendance.module';
+import { ReportModule } from './report/report.module';
+import { ContactModule } from './contact/contact.module';
+import { EvaluationModule } from './evaluation/evaluation.module';
 
 @Module({
   imports: [
@@ -22,7 +30,16 @@ import { RolesModule } from './roles/roles.module';
     UsersModule,
     PostsModule,
     AuthModule,
-    RolesModule],
+    RolesModule,
+    GradeModule,
+    GruopModule,
+    SubjectModule,
+    ScheduleModule,
+    AttendanceModule,
+    ReportModule,
+    ContactModule,
+    EvaluationModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
