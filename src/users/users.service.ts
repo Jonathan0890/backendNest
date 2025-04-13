@@ -6,6 +6,7 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { createProfileDto } from './dto/create-profile.dto';
 import { Profile } from './entities/profile.entity';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
@@ -16,13 +17,19 @@ export class UsersService {
   ) {}
 
   async createUser(user: CreateUserDto) {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(user.password, salt);
+
     const userFound = await  this.userRepository.findOne({
       where: { username: user.username }
     })
     if (userFound) {
       return new HttpException('User already exists', HttpStatus.CONFLICT);
     }
-    const newUser = this.userRepository.create(user);
+    const newUser = this.userRepository.create({
+      ...user,
+      password: hashedPassword}
+    );
     return this.userRepository.save(newUser);
   }
 
@@ -78,4 +85,18 @@ export class UsersService {
 
     return this.userRepository.save(userFound);
   }
+
+  //Auth
+  async getUserByUsername(username: string): Promise<User | null> {
+    const userFound = await this.userRepository.findOne({
+      where: { username, },
+      relations: ['role'],
+    }); 
+    if(!userFound){
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND)
+    }
+    return userFound || null;
+  }
+
+  //Cache
 }

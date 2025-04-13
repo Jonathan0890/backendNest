@@ -14,6 +14,9 @@ import { AttendanceModule } from './attendance/attendance.module';
 import { ReportModule } from './report/report.module';
 import { ContactModule } from './contact/contact.module';
 import { EvaluationModule } from './evaluation/evaluation.module';
+import { LoggerService } from './logger/logger.service';
+import { LoggerModule } from './logger/logger.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -39,8 +42,11 @@ import { EvaluationModule } from './evaluation/evaluation.module';
     ReportModule,
     ContactModule,
     EvaluationModule,
+    LoggerModule,
+    FilesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,  LoggerService, ],
+  exports: [LoggerService]
 })
 export class AppModule {}
