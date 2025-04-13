@@ -13,7 +13,10 @@ export class GroupService {
   ) {}
   async createGroup( group: CreateGroupDto) {
     const groupFound = await this.groupRepository.findOne({
-      where: {name: group.name}
+      where: {name: group.name,
+        grade: {id: group.gradeId}
+      },
+      relations: ['grade']
     })
     if (groupFound) {
       throw new HttpException('Group already exists', HttpStatus.CONFLICT);

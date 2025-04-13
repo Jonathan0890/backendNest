@@ -13,7 +13,11 @@ export class AttendanceService {
   ) {}
   async createAttendance(attendance: CreateAttendanceDto) {
     const attendanceFound = await this.attendanceRepository.findOne({
-      where: { present: attendance.present}
+      where: { 
+        student: { id: attendance.studentId },
+        schedule: { id: attendance.scheduleId }
+      },
+      relations: ['student', 'schedule']
     });
 
     if (attendanceFound) {

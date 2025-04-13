@@ -14,7 +14,11 @@ export class ContactService {
 
   async createContact(contact: CreateContactDto) {
     const contactFound = await this.contactRepository.findOne({
-      where: {message: contact.message}
+      where: {message: contact.message,
+        sender: {id: contact.senderId},
+        receiver: {id: contact.receiverId},
+      },
+      relations: ['sender', 'receiver'],
     });
 
     if (contactFound) {

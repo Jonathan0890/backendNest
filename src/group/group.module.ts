@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
-import { GruopService } from './group.service';
+import { GroupService } from './group.service';
 import { GruopController } from './group.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Gruop } from './entities/group.entity';
 import { GradeModule } from 'src/grade/grade.module';
+import { Group } from './entities/gruop.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Gruop]),
+    TypeOrmModule.forFeature([Group]),
     GradeModule
   ],
   controllers: [GruopController],
-  providers: [GruopService],
-  exports: [GruopService],
+  providers: [GroupService],
+  exports: [GroupService],
 })
 export class GruopModule {}

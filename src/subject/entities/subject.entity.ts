@@ -1,4 +1,4 @@
-import { Gruop } from "src/group/entities/group.entity";
+import { Group } from "src/group/entities/gruop.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'subjects' })
@@ -9,6 +9,6 @@ export class Subject {
     @Column()
     name: string;
 
-    @ManyToOne(()=> Gruop)
-    group: Gruop
+    @ManyToOne(()=> Group)
+    group: Group
 }

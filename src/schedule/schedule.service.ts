@@ -11,10 +11,17 @@ export class ScheduleService {
   constructor(
     @InjectRepository(Schedule) private scheduleRepository: Repository<Schedule>,
   ) { }
-  
+
   async createSchedule(schedule: CreateScheduleDto) {
-    const scheduleFound = await this.scheduleRepository.findOne(
-      { where: { day: schedule.day } });
+    const scheduleFound = await this.scheduleRepository.findOne({
+      where: {
+        subject: { id: schedule.subjectId },
+        group: { id: schedule.groupId },
+        day: schedule.day,
+        startTime: schedule.startTime,
+      },
+      relations: ['subject', 'group'],
+    });
 
     if (scheduleFound) {
       throw new HttpException('Schedule already exists', HttpStatus.CONFLICT);
@@ -50,7 +57,7 @@ export class ScheduleService {
     if (!scheduleFound) {
       throw new HttpException('Schedule not found', HttpStatus.NOT_FOUND);
     }
-    
+
     const updateSchedule = Object.assign(scheduleFound, schedule);
     return this.scheduleRepository.save(updateSchedule);
   }

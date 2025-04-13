@@ -14,7 +14,10 @@ export class ReportService {
 
   async createReport(report: CreateReportDto) {
     const reportFound = await this.reportRepository.findOne({
-      where: {issue: report.issue}
+      where: {issue: report.issue,
+      student: {id: report.studentId}
+      },
+      relations: ['student']
     });
 
     if (reportFound) {
