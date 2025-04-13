@@ -23,12 +23,12 @@ export class RolesController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() role: UpdateRoleDto) {
+  updateRol(@Param('id', ParseIntPipe) id: number, @Body() role: UpdateRoleDto) {
     return this.rolesService.updateRol(id, role);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
+  deleteRol(@Param('id', ParseIntPipe) id: number) {
     return this.rolesService.deleteRol(id);
   }
 }

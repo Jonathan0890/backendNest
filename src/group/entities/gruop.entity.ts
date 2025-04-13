@@ -3,7 +3,7 @@ import { User } from "src/users/entities/user.entity";
 import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'gruops' })
-export class Gruop {
+export class Group {
     @PrimaryGeneratedColumn()
     id: number
 
@@ -13,6 +13,6 @@ export class Gruop {
     @ManyToMany(()=> Grade, grade => grade.groups)
     grade: Grade ;
 
-    @OneToMany(() => User, user => user.gruop)
+    @OneToMany(() => User, user => user.group)
     users: User[]
 }

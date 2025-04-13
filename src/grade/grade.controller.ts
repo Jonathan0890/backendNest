@@ -1,34 +1,34 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { GradeService } from './grade.service';
 import { CreateGradeDto } from './dto/create-grade.dto';
 import { UpdateGradeDto } from './dto/update-grade.dto';
 
 @Controller('grade')
 export class GradeController {
-  constructor(private readonly gradeService: GradeService) {}
-
-  @Post()
-  create(@Body() createGradeDto: CreateGradeDto) {
-    return this.gradeService.create(createGradeDto);
-  }
+  constructor(private readonly gradeService: GradeService) { }
 
   @Get()
-  findAll() {
-    return this.gradeService.findAll();
+  getGrades() {
+    return this.gradeService.getGrades();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.gradeService.findOne(+id);
+  getGrade(@Param('id', ParseIntPipe) id: number) {
+    return this.gradeService.getGrade(id);
+  }
+
+  @Post()
+  createGrade(@Body() newGrade: CreateGradeDto) {
+    return this.gradeService.createGrade(newGrade);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGradeDto: UpdateGradeDto) {
-    return this.gradeService.update(+id, updateGradeDto);
+  updateGrade(@Param('id', ParseIntPipe) id: number, @Body() grade: UpdateGradeDto) {
+    return this.gradeService.updateGrade(id, grade);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.gradeService.remove(+id);
+  deleteGrade(@Param('id', ParseIntPipe) id: number) {
+    return this.gradeService.deleteGrade(id);
   }
 }

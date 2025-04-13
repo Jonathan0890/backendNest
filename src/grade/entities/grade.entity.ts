@@ -1,4 +1,4 @@
-import { Gruop } from "src/group/entities/group.entity";
+import { Group } from "src/group/entities/gruop.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name: 'grades'})
@@ -9,6 +9,6 @@ export class Grade {
     @Column({ unique: true })
     name: string;
     
-    @OneToMany(() => Gruop, gruop => gruop.grade)
-    groups : Gruop[];
+    @OneToMany(() => Group, group => group.grade)
+    groups : Group[];
 }

@@ -1,34 +1,35 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { GruopService } from './group.service';
-import { CreateGruopDto } from './dto/create-group.dto';
-import { UpdateGruopDto } from './dto/update-group.dto';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { GroupService } from './group.service';
+import { CreateGroupDto } from './dto/create-group.dto';
+import { UpdateGroupDto } from './dto/update-group.dto';
 
 @Controller('gruop')
 export class GruopController {
-  constructor(private readonly gruopService: GruopService) {}
-
-  @Post()
-  create(@Body() createGruopDto: CreateGruopDto) {
-    return this.gruopService.create(createGruopDto);
-  }
+  constructor(private readonly gruopService: GroupService) { }
 
   @Get()
-  findAll() {
-    return this.gruopService.findAll();
+  getGroups()//: Promise<Gruop[]>
+  {
+    return this.gruopService.getGroups();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.gruopService.findOne(+id);
+  getGroup(@Param('id', ParseIntPipe) id: number) {
+    return this.gruopService.getGroup(id);
+  }
+
+  @Post()
+  create(@Body() newGroup: CreateGroupDto) {
+    return this.gruopService.createGroup(newGroup);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGruopDto: UpdateGruopDto) {
-    return this.gruopService.update(+id, updateGruopDto);
+  updateGroup(@Param('id', ParseIntPipe) id: number, @Body() group: UpdateGroupDto) {
+    return this.gruopService.updateGroup(id, group);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.gruopService.remove(+id);
+  deleteGroup(@Param('id', ParseIntPipe) id: number) {
+    return this.gruopService.deleteGroup(id);
   }
 }

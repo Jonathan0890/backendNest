@@ -1,26 +1,59 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateGradeDto } from './dto/create-grade.dto';
 import { UpdateGradeDto } from './dto/update-grade.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Grade } from './entities/grade.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class GradeService {
-  create(createGradeDto: CreateGradeDto) {
-    return 'This action adds a new grade';
+
+  constructor(
+    @InjectRepository(Grade) private gradeRepository: Repository<Grade>,
+  ) {}
+
+  getGrades() {
+    return this.gradeRepository.find();
   }
 
-  findAll() {
-    return `This action returns all grade`;
+  async getGrade(id: number) {
+    const gradeFound = await this.gradeRepository.findOne({
+      where: {id}
+    })
+    if (!gradeFound) {
+      throw new HttpException('Grade not found', HttpStatus.NOT_FOUND);
+    }
+    return this.gradeRepository.findOne({where: {id}});
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} grade`;
+  async createGrade(grade: CreateGradeDto) {
+    const gradeFound = await this.gradeRepository.findOne({
+        where: {name: grade.name}
+    })
+    if (gradeFound) {
+      throw new HttpException('Grade already exists', HttpStatus.CONFLICT);
+    }
+    const mewGrade = this.gradeRepository.create(grade);
+    return this.gradeRepository.save(mewGrade);
   }
 
-  update(id: number, updateGradeDto: UpdateGradeDto) {
-    return `This action updates a #${id} grade`;
+  async updateGrade(id: number, grade: UpdateGradeDto) {
+    const gradeFound = await this.gradeRepository.findOne({
+      where: {id}
+    })
+    if (!gradeFound) {
+      throw new HttpException('Grade not found', HttpStatus.NOT_FOUND);
+    }
+    const updateGrade = Object.assign(gradeFound, grade);
+    return this.gradeRepository.save(updateGrade);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} grade`;
+  async deleteGrade(id: number) {
+    const result = await this.gradeRepository.delete({id});
+
+    if (result.affected === 0){
+      throw new HttpException('Grade not found', HttpStatus.NOT_FOUND)
+    }
+    return result;
   }
 }

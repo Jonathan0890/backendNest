@@ -1,1 +1,4 @@
-export class CreateGruopDto {}
+export class CreateGroupDto {
+    name: string;
+    gradeId: number
+}

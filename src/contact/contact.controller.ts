@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { ContactService } from './contact.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
@@ -8,27 +8,27 @@ export class ContactController {
   constructor(private readonly contactService: ContactService) {}
 
   @Post()
-  create(@Body() createContactDto: CreateContactDto) {
-    return this.contactService.create(createContactDto);
+  createContact(@Body() createContactDto: CreateContactDto) {
+    return this.contactService.createContact(createContactDto);
   }
 
   @Get()
-  findAll() {
-    return this.contactService.findAll();
+  getContasts() {
+    return this.contactService.getContasts();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.contactService.findOne(+id);
+  getContast(@Param('id', ParseIntPipe) id: number) {
+    return this.contactService.getContast(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateContactDto: UpdateContactDto) {
-    return this.contactService.update(+id, updateContactDto);
+  updateContact(@Param('id', ParseIntPipe) id: number, @Body() newContact: UpdateContactDto) {
+    return this.contactService.updateContact(+id, newContact);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.contactService.remove(+id);
+  deleteContact(@Param('id', ParseIntPipe) id: number) {
+    return this.contactService.deleteContact(id);
   }
 }

@@ -1,26 +1,61 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Contact } from './entities/contact.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ContactService {
-  create(createContactDto: CreateContactDto) {
-    return 'This action adds a new contact';
+
+  constructor(
+    @InjectRepository(Contact) private contactRepository: Repository<Contact>,
+  ) {}
+
+  async createContact(contact: CreateContactDto) {
+    const contactFound = await this.contactRepository.findOne({
+      where: {message: contact.message}
+    });
+
+    if (contactFound) {
+      throw new HttpException('Contact already exists', HttpStatus.CONFLICT);
+    }
+    const newContact = this.contactRepository.create(contact);
+    return this.contactRepository.save(newContact);
   }
 
-  findAll() {
-    return `This action returns all contact`;
+  getContasts() {
+    return this.contactRepository.find({
+      relations: ['sender', 'receiver'],
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} contact`;
+  async getContast(id: number) {
+    const contactFound = await this.contactRepository.findOne(
+      {where: {id},
+      relations: ['sender', 'receiver'],
+    });
+    if (!contactFound) {
+      throw new HttpException('Contact not found', HttpStatus.NOT_FOUND);
+    }
+    return this.contactRepository.findOne({where: {id}});
   }
 
-  update(id: number, updateContactDto: UpdateContactDto) {
-    return `This action updates a #${id} contact`;
+  async updateContact(id: number, contact: UpdateContactDto) {
+    const contactFound = await this.contactRepository.findOne({where: {id}});
+    if (!contactFound) {
+      throw new HttpException('Contact not found', HttpStatus.NOT_FOUND);
+    }
+    const updatedContact = Object.assign(contactFound, contact);
+    return this.contactRepository.save(updatedContact);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} contact`;
+  async deleteContact(id: number) {
+    const result = await this.contactRepository.delete({id});
+
+    if (result.affected === 0){
+      throw new HttpException('Contact not found', HttpStatus.NOT_FOUND)
+    }
+    return result;
   }
 }

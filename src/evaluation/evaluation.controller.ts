@@ -1,34 +1,34 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { EvaluationService } from './evaluation.service';
 import { CreateEvaluationDto } from './dto/create-evaluation.dto';
 import { UpdateEvaluationDto } from './dto/update-evaluation.dto';
 
 @Controller('evaluation')
 export class EvaluationController {
-  constructor(private readonly evaluationService: EvaluationService) {}
-
-  @Post()
-  create(@Body() createEvaluationDto: CreateEvaluationDto) {
-    return this.evaluationService.create(createEvaluationDto);
-  }
+  constructor(private readonly evaluationService: EvaluationService) { }
 
   @Get()
-  findAll() {
-    return this.evaluationService.findAll();
+  getEvaluations () {
+    return this.evaluationService.getEvaluations();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.evaluationService.findOne(+id);
+  getEvaluation (@Param('id', ParseIntPipe) id: number) {
+    return this.evaluationService.getEvaluation(id);
+  }
+
+  @Post()
+  createEvaluation(@Body() newEvaluation: CreateEvaluationDto) {
+    return this.evaluationService.createEvaluation(newEvaluation);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEvaluationDto: UpdateEvaluationDto) {
-    return this.evaluationService.update(+id, updateEvaluationDto);
+  updateEvaluation(@Param('id', ParseIntPipe) id: number, @Body() evaluation: UpdateEvaluationDto) {
+    return this.evaluationService.updateEvaluation(id, evaluation);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.evaluationService.remove(+id);
+  deleteEvaluation(@Param('id', ParseIntPipe) id: number) {
+    return this.evaluationService.deleteEvaluation(id);
   }
 }

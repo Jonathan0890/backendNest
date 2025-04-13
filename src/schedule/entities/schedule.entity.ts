@@ -1,4 +1,4 @@
-import { Gruop } from "src/group/entities/group.entity";
+import { Group } from "src/group/entities/gruop.entity";
 import { Subject } from "src/subject/entities/subject.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -19,6 +19,6 @@ export class Schedule {
     @ManyToOne(() => Subject)
     subject: Subject;
 
-    @ManyToOne(() => Gruop)
-    group: Gruop;
+    @ManyToOne(() => Group)
+    group: Group;
 }

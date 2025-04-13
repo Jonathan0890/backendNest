@@ -1,26 +1,61 @@
-import { Injectable } from '@nestjs/common';
-import { CreateGruopDto } from './dto/create-group.dto';
-import { UpdateGruopDto } from './dto/update-group.dto';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { CreateGroupDto } from './dto/create-group.dto';
+import { UpdateGroupDto } from './dto/update-group.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Group } from './entities/gruop.entity';
 
 @Injectable()
-export class GruopService {
-  create(createGruopDto: CreateGruopDto) {
-    return 'This action adds a new gruop';
+export class GroupService {
+
+  constructor(
+    @InjectRepository(Group) private groupRepository: Repository<Group>,
+  ) {}
+  async createGroup( group: CreateGroupDto) {
+    const groupFound = await this.groupRepository.findOne({
+      where: {name: group.name}
+    })
+    if (groupFound) {
+      throw new HttpException('Group already exists', HttpStatus.CONFLICT);
+    }
+    const newgroup = this.groupRepository.create(group);
+    return this.groupRepository.save(newgroup);
   }
 
-  findAll() {
-    return `This action returns all gruop`;
+  getGroups() {
+    return this.groupRepository.find({
+      relations: ['grade'],
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} gruop`;
+  async getGroup(id: number) {
+    const groupFound = await this.groupRepository.findOne(
+      {where: {id},
+      relations: ['grade'],
+    });
+    if (!groupFound) {
+      throw new HttpException('group not found', HttpStatus.NOT_FOUND);
+    }
+    return this.groupRepository.findOne({where: {id}});
   }
 
-  update(id: number, updateGruopDto: UpdateGruopDto) {
-    return `This action updates a #${id} gruop`;
+  async updateGroup(id: number, group: UpdateGroupDto) {
+    const groupFound = await this.groupRepository.findOne({
+      where: {id,},
+    })
+    if (!groupFound) {
+      throw new HttpException('group not found', HttpStatus.NOT_FOUND);
+    }
+    const updateGroup = Object.assign(groupFound, group);
+    return this.groupRepository.save(updateGroup);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} gruop`;
+  async deleteGroup(id: number) {
+    const result = await this.groupRepository.delete({id});
+
+    if (result.affected === 0){
+      throw new HttpException('group not found', HttpStatus.NOT_FOUND)
+    }
+    return result;
   }
 }

@@ -1,1 +1,3 @@
-export class CreateGradeDto {}
+export class CreateGradeDto {
+    name: string;
+}

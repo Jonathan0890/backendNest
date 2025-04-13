@@ -2,11 +2,11 @@ import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany
 import { Profile } from "./profile.entity";
 import { Post } from "src/posts/entities/post.entity";
 import { Role } from "src/roles/entities/role.entity";
-import { Gruop } from "src/group/entities/group.entity";
 import { Evaluation } from "src/evaluation/entities/evaluation.entity";
 import { Attendance } from "src/attendance/entities/attendance.entity";
 import { Report } from "src/report/entities/report.entity";
 import { Contact } from "src/contact/entities/contact.entity";
+import { Group } from "src/group/entities/gruop.entity";
 
 @Entity({ name: 'users' })
 export class User {
@@ -36,8 +36,8 @@ export class User {
     @JoinTable({ name: 'users_roles' })
     roles: Role [];
 
-    @ManyToOne(() => Gruop, gruop => gruop.users ) //uno a muchos
-    gruop: Gruop;
+    @ManyToOne(() => Group, group => group.users ) //uno a muchos
+    group: Group ;
 
     @OneToMany(() => Evaluation, evaluation => evaluation.student) //uno a muchos
     evaluations: Evaluation []

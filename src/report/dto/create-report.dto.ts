@@ -1,1 +1,5 @@
-export class CreateReportDto {}
+export class CreateReportDto {
+    studentId: number;
+    issue: string;
+    description?: string;
+}
