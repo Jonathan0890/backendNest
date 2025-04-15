@@ -17,6 +17,7 @@ import { EvaluationModule } from './evaluation/evaluation.module';
 import { LoggerService } from './logger/logger.service';
 import { LoggerModule } from './logger/logger.module';
 import { FilesModule } from './files/files.module';
+import { CacheCustomModule} from './cache/cache.module';
 
 @Module({
   imports: [
@@ -44,9 +45,10 @@ import { FilesModule } from './files/files.module';
     EvaluationModule,
     LoggerModule,
     FilesModule,
+    CacheCustomModule,
   ],
   controllers: [AppController],
-  providers: [AppService,  LoggerService, ],
+  providers: [AppService,  LoggerService ],
   exports: [LoggerService]
 })
 export class AppModule {}

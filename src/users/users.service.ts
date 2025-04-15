@@ -24,13 +24,13 @@ export class UsersService {
       where: { username: user.username }
     })
     if (userFound) {
-      return new HttpException('User already exists', HttpStatus.CONFLICT);
+      throw new HttpException('User already exists', HttpStatus.CONFLICT);
     }
     const newUser = this.userRepository.create({
       ...user,
       password: hashedPassword}
     );
-    return this.userRepository.save(newUser);
+    return await this.userRepository.save(newUser);
   }
 
   getUsers() {  
@@ -43,7 +43,7 @@ export class UsersService {
     });
 
     if (!userFound) {
-      return new HttpException('User not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
     return this.userRepository.findOne({
       where: { id }
@@ -56,7 +56,7 @@ export class UsersService {
     })
 
     if (!userFound){
-      return new HttpException('User not found', HttpStatus.NOT_FOUND)
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND)
     }
     const updateUser = Object.assign(userFound, user);
     return this.userRepository.save(updateUser);
@@ -66,7 +66,7 @@ export class UsersService {
     const result = await this.userRepository.delete({id});
 
     if (result.affected === 0){
-      return new HttpException('User not found', HttpStatus.NOT_FOUND)
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND)
     }
     return result;
   }
@@ -77,7 +77,7 @@ export class UsersService {
       where: { id, },
     }); 
     if(!userFound){
-      return new HttpException('User not found', HttpStatus.NOT_FOUND)
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND)
     }
     const newProfile = this.profileRepository.create(profile);
     const savedProfile = await this.profileRepository.save(newProfile);
@@ -98,5 +98,4 @@ export class UsersService {
     return userFound || null;
   }
 
-  //Cache
 }
