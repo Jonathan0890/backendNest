@@ -7,8 +7,15 @@ import session from 'express-session';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
-  app.enableCors();
-  app.use(cookieParser());
+  app.enableCors({
+    origin: [
+      'http://localhost:5173',
+      'http://localhost:4200',
+    ],
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  });
+  app.use(cookieParser()); 
   app.use(session({
     secret: 'mySecretSessionKey',
     resave: false,

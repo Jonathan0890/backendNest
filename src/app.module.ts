@@ -18,6 +18,19 @@ import { LoggerService } from './logger/logger.service';
 import { LoggerModule } from './logger/logger.module';
 import { FilesModule } from './files/files.module';
 import { CacheCustomModule} from './cache/cache.module';
+import { BankAccountsModule } from './bank_accounts/bank_accounts.module';
+import { TransactionsModule } from './transactions/transactions.module';
+import { BudgetsModule } from './budgets/budgets.module';
+import { InvestmentsModule } from './investments/investments.module';
+import { ExpenseCategoriesModule } from './expense_categories/expense_categories.module';
+import { LoansModule } from './loans/loans.module';
+import { RecurringPaymentsModule } from './recurring_payments/recurring_payments.module';
+import { SavingsGoalsModule } from './savings_goals/savings_goals.module';
+import { CurrenciesModule } from './currencies/currencies.module';
+import { RemindersModule } from './reminders/reminders.module';
+import { SummaryModule } from './summary/summary.module';
+import { ExchangeRatesModule } from './exchange_rates/exchange_rates.module';
+import { MonthlyGoalsModule } from './monthly_goals/monthly_goals.module';
 
 @Module({
   imports: [
@@ -46,6 +59,19 @@ import { CacheCustomModule} from './cache/cache.module';
     LoggerModule,
     FilesModule,
     CacheCustomModule,
+    BankAccountsModule,
+    TransactionsModule,
+    BudgetsModule,
+    InvestmentsModule,
+    ExpenseCategoriesModule,
+    LoansModule,
+    RecurringPaymentsModule,
+    SavingsGoalsModule,
+    CurrenciesModule,
+    RemindersModule,
+    SummaryModule,
+    ExchangeRatesModule,
+    MonthlyGoalsModule,
   ],
   controllers: [AppController],
   providers: [AppService,  LoggerService ],
