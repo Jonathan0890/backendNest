@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { CurrenciesService } from './currencies.service';
 import { CreateCurrencyDto } from './dto/create-currency.dto';
 import { UpdateCurrencyDto } from './dto/update-currency.dto';
@@ -8,27 +8,27 @@ export class CurrenciesController {
   constructor(private readonly currenciesService: CurrenciesService) {}
 
   @Post()
-  create(@Body() createCurrencyDto: CreateCurrencyDto) {
-    return this.currenciesService.create(createCurrencyDto);
+  createCurrency(@Body() newCurrency: CreateCurrencyDto) {
+    return this.currenciesService.createCurrency(newCurrency);
   }
 
   @Get()
-  findAll() {
-    return this.currenciesService.findAll();
+  getCurrencies() {
+    return this.currenciesService.getCurrencies();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.currenciesService.findOne(+id);
+  getCurrency(@Param('id', ParseIntPipe) id: number) {
+    return this.currenciesService.getCurrency(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCurrencyDto: UpdateCurrencyDto) {
-    return this.currenciesService.update(+id, updateCurrencyDto);
+  updateCurrency(@Param('id', ParseIntPipe) id: number, @Body() currency: UpdateCurrencyDto) {
+    return this.currenciesService.updateCurrency(id, currency);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.currenciesService.remove(+id);
+  deleteCurrency(@Param('id', ParseIntPipe) id: number) {
+    return this.currenciesService.deleteCurrency(id);
   }
 }

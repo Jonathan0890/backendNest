@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { ExchangeRatesService } from './exchange_rates.service';
 import { CreateExchangeRateDto } from './dto/create-exchange_rate.dto';
 import { UpdateExchangeRateDto } from './dto/update-exchange_rate.dto';
@@ -8,27 +8,27 @@ export class ExchangeRatesController {
   constructor(private readonly exchangeRatesService: ExchangeRatesService) {}
 
   @Post()
-  create(@Body() createExchangeRateDto: CreateExchangeRateDto) {
-    return this.exchangeRatesService.create(createExchangeRateDto);
+  createExchangeRate(@Body() newExchangeRate: CreateExchangeRateDto) {
+    return this.exchangeRatesService.createExchangeRate(newExchangeRate);
   }
 
   @Get()
-  findAll() {
-    return this.exchangeRatesService.findAll();
+  getExchangeRates() {
+    return this.exchangeRatesService.getExchangeRates();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.exchangeRatesService.findOne(+id);
+  getExchangeRate(@Param('id', ParseIntPipe) id: number) {
+    return this.exchangeRatesService.getExchangeRate(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateExchangeRateDto: UpdateExchangeRateDto) {
-    return this.exchangeRatesService.update(+id, updateExchangeRateDto);
+  updateExchangeRate(@Param('id', ParseIntPipe) id: number, @Body() exchangeRate: UpdateExchangeRateDto) {
+    return this.exchangeRatesService.updateExchangeRate(id, exchangeRate);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.exchangeRatesService.remove(+id);
+  deleteExchangeRate(@Param('id', ParseIntPipe) id: number) {
+    return this.exchangeRatesService.deleteExchangeRate(id);
   }
 }

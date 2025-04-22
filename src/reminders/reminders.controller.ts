@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { RemindersService } from './reminders.service';
 import { CreateReminderDto } from './dto/create-reminder.dto';
 import { UpdateReminderDto } from './dto/update-reminder.dto';
@@ -8,27 +8,27 @@ export class RemindersController {
   constructor(private readonly remindersService: RemindersService) {}
 
   @Post()
-  create(@Body() createReminderDto: CreateReminderDto) {
-    return this.remindersService.create(createReminderDto);
+  createReminder(@Body() createReminderDto: CreateReminderDto) {
+    return this.remindersService.createReminder(createReminderDto);
   }
 
   @Get()
-  findAll() {
-    return this.remindersService.findAll();
+  getReminders() {
+    return this.remindersService.getReminders();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.remindersService.findOne(+id);
+  getReminder(@Param('id', ParseIntPipe) id: number) {
+    return this.remindersService.getReminder(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReminderDto: UpdateReminderDto) {
-    return this.remindersService.update(+id, updateReminderDto);
+  updateReminder(@Param('id', ParseIntPipe) id: number, @Body() reminder: UpdateReminderDto) {
+    return this.remindersService.updateReminder(id, reminder);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.remindersService.remove(+id);
+  deleteReminder(@Param('id', ParseIntPipe) id: number) {
+    return this.remindersService.deleteReminder(id);
   }
 }

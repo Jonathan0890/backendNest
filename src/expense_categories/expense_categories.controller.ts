@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { ExpenseCategoriesService } from './expense_categories.service';
 import { CreateExpenseCategoryDto } from './dto/create-expense_category.dto';
 import { UpdateExpenseCategoryDto } from './dto/update-expense_category.dto';
@@ -8,27 +8,27 @@ export class ExpenseCategoriesController {
   constructor(private readonly expenseCategoriesService: ExpenseCategoriesService) {}
 
   @Post()
-  create(@Body() createExpenseCategoryDto: CreateExpenseCategoryDto) {
-    return this.expenseCategoriesService.create(createExpenseCategoryDto);
+  createExpenseCategory(@Body() newExpenseCategory: CreateExpenseCategoryDto) {
+    return this.expenseCategoriesService.createExpenseCategory(newExpenseCategory);
   }
 
   @Get()
-  findAll() {
-    return this.expenseCategoriesService.findAll();
+  getExpenseCategories() {
+    return this.expenseCategoriesService.getExpenseCategories();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.expenseCategoriesService.findOne(+id);
+  getExpenseCategory(@Param('id', ParseIntPipe) id: number) {
+    return this.expenseCategoriesService.getExpenseCategory(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateExpenseCategoryDto: UpdateExpenseCategoryDto) {
-    return this.expenseCategoriesService.update(+id, updateExpenseCategoryDto);
+  updateExpenseCategory(@Param('id', ParseIntPipe) id: number, @Body() expenseCategory: UpdateExpenseCategoryDto) {
+    return this.expenseCategoriesService.updateExpenseCategory(id, expenseCategory);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.expenseCategoriesService.remove(+id);
+  deleteExpenseCategory(@Param('id', ParseIntPipe) id: number) {
+    return this.expenseCategoriesService.deleteExpenseCategory(id);
   }
 }

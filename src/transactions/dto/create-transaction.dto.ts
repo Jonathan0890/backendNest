@@ -1,1 +1,4 @@
-export class CreateTransactionDto {}
+export class CreateTransactionDto {
+    transactionDate: Date;
+    amount: number;
+}

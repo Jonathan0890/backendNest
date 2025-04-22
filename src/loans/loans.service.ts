@@ -1,26 +1,63 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateLoanDto } from './dto/create-loan.dto';
 import { UpdateLoanDto } from './dto/update-loan.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Loan } from './entities/loan.entity';
 
 @Injectable()
 export class LoansService {
-  create(createLoanDto: CreateLoanDto) {
-    return 'This action adds a new loan';
+  constructor(
+    @InjectRepository(Loan) private loanRepository: Repository<Loan>,
+  ) { }
+  async createLoan(loan: CreateLoanDto) {
+    const loanFound = await this.loanRepository.findOne({
+      where: {
+        lender: loan.lender,
+        due_date: loan.due_date,
+        amount: loan.amount,
+        interest_rate: loan.interest_rate
+      }
+    });
+    if (loanFound) {
+      throw new HttpException('Loan already exists', HttpStatus.CONFLICT)
+    }
+
+    const newLoan = this.loanRepository.create(loan);
+    return this.loanRepository.save(newLoan);
   }
 
-  findAll() {
-    return `This action returns all loans`;
+  getLoans() {
+    return this.loanRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} loan`;
+  async getLoan(id: number) {
+    const loanFound = await this.loanRepository.findOne({ where: { id } });
+
+    if (!loanFound) {
+      throw new HttpException('Loan not found', HttpStatus.NOT_FOUND)
+    }
+
+    return this.loanRepository.findOne({ where: { id } });
   }
 
-  update(id: number, updateLoanDto: UpdateLoanDto) {
-    return `This action updates a #${id} loan`;
+  async updateLoan(id: number, loan: UpdateLoanDto) {
+    const loanFound = await this.loanRepository.findOne({ where: { id } });
+
+    if (!loanFound) {
+      throw new HttpException('Loan not found', HttpStatus.NOT_FOUND)
+    }
+
+    const updateLoan = Object.assign(loanFound, loan);
+    return this.loanRepository.save(updateLoan);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} loan`;
+  async deleteLoan(id: number) {
+    const result = await this.loanRepository.delete({ id });
+
+    if (result.affected === 0) {
+      throw new HttpException('Loan not found', HttpStatus.NOT_FOUND)
+    }
+    return result;
   }
 }

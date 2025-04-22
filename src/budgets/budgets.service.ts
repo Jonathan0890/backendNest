@@ -1,26 +1,68 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateBudgetDto } from './dto/create-budget.dto';
 import { UpdateBudgetDto } from './dto/update-budget.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Budget } from './entities/budget.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class BudgetsService {
-  create(createBudgetDto: CreateBudgetDto) {
-    return 'This action adds a new budget';
+  constructor(
+    @InjectRepository(Budget) private budgetRepository: Repository<Budget>,
+  ) {}
+  async createBudget(budget: CreateBudgetDto) {
+    const budgetFound = await this.budgetRepository.findOne({
+      where: {
+        budget_name: budget.budget_name ,
+      },
+    })
+
+    if (budgetFound) {
+      throw new HttpException('Budget already exists', HttpStatus.CONFLICT);
+    }
+
+    const newBudget = this.budgetRepository.create(budget);
+    return await this.budgetRepository.save(newBudget);
   }
 
-  findAll() {
-    return `This action returns all budgets`;
+  getBudgets() {
+    return this.budgetRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} budget`;
+  async getBudget(id: number) {
+    const budgetFound = await this.budgetRepository.findOne({
+      where: {
+        id,
+      },
+    })
+
+    if (!budgetFound) {
+      throw new HttpException('Budget not found', HttpStatus.NOT_FOUND);
+    }
+    return this.budgetRepository.findOne({where: {id}});
   }
 
-  update(id: number, updateBudgetDto: UpdateBudgetDto) {
-    return `This action updates a #${id} budget`;
+  async updateBudget(id: number, budget: UpdateBudgetDto) {
+    const budgetFound = await this.budgetRepository.findOne({
+      where: {
+        id,
+      },
+    })
+
+    if (!budgetFound) {
+      throw new HttpException('Budget not found', HttpStatus.NOT_FOUND);
+    }
+
+    const updateBudget = Object.assign(budgetFound, budget);
+    return this.budgetRepository.save(updateBudget);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} budget`;
+  async deleteBudget(id: number) {
+    const result = await this.budgetRepository.delete({ id });
+
+    if (result.affected === 0) {
+      throw new HttpException('Budget not found', HttpStatus.NOT_FOUND);
+    }
+    return result;
   }
 }

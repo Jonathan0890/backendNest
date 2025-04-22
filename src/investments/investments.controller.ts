@@ -8,27 +8,27 @@ export class InvestmentsController {
   constructor(private readonly investmentsService: InvestmentsService) {}
 
   @Post()
-  create(@Body() createInvestmentDto: CreateInvestmentDto) {
-    return this.investmentsService.create(createInvestmentDto);
+  createInvestment(@Body() newInvestment: CreateInvestmentDto) {
+    return this.investmentsService.createInvestment(newInvestment);
   }
 
   @Get()
-  findAll() {
-    return this.investmentsService.findAll();
+  getInvestments() {
+    return this.investmentsService.getInvestments();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.investmentsService.findOne(+id);
+  getInvestment(@Param('id') id: number) {
+    return this.investmentsService.getInvestment(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateInvestmentDto: UpdateInvestmentDto) {
-    return this.investmentsService.update(+id, updateInvestmentDto);
+  updateInvestment(@Param('id') id: number, @Body() updateInvestmentDto: UpdateInvestmentDto) {
+    return this.investmentsService.updateInvestment(id, updateInvestmentDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.investmentsService.remove(+id);
+  deleteInvestment(@Param('id') id: number) {
+    return this.investmentsService.deleteInvestment(id);
   }
 }

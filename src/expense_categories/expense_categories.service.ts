@@ -1,26 +1,62 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateExpenseCategoryDto } from './dto/create-expense_category.dto';
 import { UpdateExpenseCategoryDto } from './dto/update-expense_category.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ExpenseCategory } from './entities/expense_category.entity';
 
 @Injectable()
 export class ExpenseCategoriesService {
-  create(createExpenseCategoryDto: CreateExpenseCategoryDto) {
-    return 'This action adds a new expenseCategory';
+  constructor(
+    @InjectRepository(ExpenseCategory) private expenseCategoryRepository: Repository<ExpenseCategory>,
+  ) {}
+  async createExpenseCategory(newExpenseCategory: CreateExpenseCategoryDto) {
+    const expenseCategoryFound = await this.expenseCategoryRepository.findOne({
+      where: { category_name: newExpenseCategory.category_name },
+    })
+
+    if (expenseCategoryFound) {
+      throw new HttpException('Expense category already exists', HttpStatus.CONFLICT);
+    }
+    
+    const expenseCategory = this.expenseCategoryRepository.create(newExpenseCategory);
+    return this.expenseCategoryRepository.save(expenseCategory);
   }
 
-  findAll() {
-    return `This action returns all expenseCategories`;
+  getExpenseCategories() {
+    return this.expenseCategoryRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} expenseCategory`;
+  async getExpenseCategory(id: number) {
+    const expenseCategoryFound = await this.expenseCategoryRepository.findOne({
+      where: { id },
+    })
+    if (!expenseCategoryFound) {
+      throw new HttpException('Expense category not found', HttpStatus.NOT_FOUND);
+    }
+    return this.expenseCategoryRepository.findOne({ where: { id } });
   }
 
-  update(id: number, updateExpenseCategoryDto: UpdateExpenseCategoryDto) {
-    return `This action updates a #${id} expenseCategory`;
+  async updateExpenseCategory(id: number, expenseCategory: UpdateExpenseCategoryDto) {
+    const expenseCategoryFound = await this.expenseCategoryRepository.findOne({
+      where: { id },
+    })
+
+    if (!expenseCategoryFound) {
+      throw new HttpException('Expense category not found', HttpStatus.NOT_FOUND);
+    }
+
+    const updateExpenseCategory = Object.assign(expenseCategoryFound, expenseCategory);
+    return this.expenseCategoryRepository.save(updateExpenseCategory);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} expenseCategory`;
+  async deleteExpenseCategory(id: number) {
+    const result = await this.expenseCategoryRepository.delete({ id });
+
+    if (result.affected === 0) {
+      throw new HttpException('Expense category not found', HttpStatus.NOT_FOUND);
+    }
+    return result;
   }
+  
 }

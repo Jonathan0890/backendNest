@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { SummaryService } from './summary.service';
 import { CreateSummaryDto } from './dto/create-summary.dto';
 import { UpdateSummaryDto } from './dto/update-summary.dto';
@@ -6,29 +6,29 @@ import { UpdateSummaryDto } from './dto/update-summary.dto';
 @Controller('summary')
 export class SummaryController {
   constructor(private readonly summaryService: SummaryService) {}
-
-  @Post()
-  create(@Body() createSummaryDto: CreateSummaryDto) {
-    return this.summaryService.create(createSummaryDto);
-  }
-
+  
   @Get()
-  findAll() {
-    return this.summaryService.findAll();
+  getSummaries() {
+    return this.summaryService.getSummaries();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.summaryService.findOne(+id);
+  getSummary(@Param('id', ParseIntPipe) id: number) {
+    return this.summaryService.getSummary(id);
+  }
+
+  @Post()
+  createSummary(@Body() newSummary: CreateSummaryDto) {
+    return this.summaryService.createSummary(newSummary);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSummaryDto: UpdateSummaryDto) {
-    return this.summaryService.update(+id, updateSummaryDto);
+  updateSummary(@Param('id', ParseIntPipe) id: number, @Body() summary: UpdateSummaryDto) {
+    return this.summaryService.updateSummary(id, summary);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.summaryService.remove(+id);
+  deleteSummary(@Param('id', ParseIntPipe) id: number) {
+    return this.summaryService.deleteSummary(id);
   }
 }

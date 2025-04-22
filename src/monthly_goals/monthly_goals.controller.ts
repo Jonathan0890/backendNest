@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { MonthlyGoalsService } from './monthly_goals.service';
 import { CreateMonthlyGoalDto } from './dto/create-monthly_goal.dto';
 import { UpdateMonthlyGoalDto } from './dto/update-monthly_goal.dto';
@@ -8,27 +8,27 @@ export class MonthlyGoalsController {
   constructor(private readonly monthlyGoalsService: MonthlyGoalsService) {}
 
   @Post()
-  create(@Body() createMonthlyGoalDto: CreateMonthlyGoalDto) {
-    return this.monthlyGoalsService.create(createMonthlyGoalDto);
+  createMonthlyGoal(@Body() newMonthlyGoal: CreateMonthlyGoalDto) {
+    return this.monthlyGoalsService.createMonthlyGoal(newMonthlyGoal);
   }
 
   @Get()
-  findAll() {
-    return this.monthlyGoalsService.findAll();
+  getMonthlyGoals() {
+    return this.monthlyGoalsService.getMonthlyGoals();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.monthlyGoalsService.findOne(+id);
+  getMonthlyGoal(@Param('id', ParseIntPipe) id: number) {
+    return this.monthlyGoalsService.getMonthlyGoal(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMonthlyGoalDto: UpdateMonthlyGoalDto) {
-    return this.monthlyGoalsService.update(+id, updateMonthlyGoalDto);
+  updateMonthlyGoal(@Param('id', ParseIntPipe) id: number, @Body() monthlyGoal: UpdateMonthlyGoalDto) {
+    return this.monthlyGoalsService.updateMonthlyGoal(id, monthlyGoal);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.monthlyGoalsService.remove(+id);
+  deleteMonthlyGoal(@Param('id', ParseIntPipe) id: number) {
+    return this.monthlyGoalsService.deleteMonthlyGoal(id);
   }
 }

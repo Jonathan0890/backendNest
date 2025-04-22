@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { SavingsGoalsService } from './savings_goals.service';
 import { CreateSavingsGoalDto } from './dto/create-savings_goal.dto';
 import { UpdateSavingsGoalDto } from './dto/update-savings_goal.dto';
@@ -8,27 +8,27 @@ export class SavingsGoalsController {
   constructor(private readonly savingsGoalsService: SavingsGoalsService) {}
 
   @Post()
-  create(@Body() createSavingsGoalDto: CreateSavingsGoalDto) {
-    return this.savingsGoalsService.create(createSavingsGoalDto);
+  createSavingsGoal(@Body() newSavingsGoal: CreateSavingsGoalDto) {
+    return this.savingsGoalsService.createSavingsGoal(newSavingsGoal);
   }
 
   @Get()
-  findAll() {
-    return this.savingsGoalsService.findAll();
+  getSavingsGoals() {
+    return this.savingsGoalsService.getSavingsGoals();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.savingsGoalsService.findOne(+id);
+  getSavingsGoal(@Param('id', ParseIntPipe) id: number) {
+    return this.savingsGoalsService.getSavingsGoal(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSavingsGoalDto: UpdateSavingsGoalDto) {
-    return this.savingsGoalsService.update(+id, updateSavingsGoalDto);
+  updateSavingsGoal(@Param('id', ParseIntPipe) id: number, @Body() savingsGoal: UpdateSavingsGoalDto) {
+    return this.savingsGoalsService.updateSavingsGoal(id, savingsGoal);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.savingsGoalsService.remove(+id);
+  deleteSavingsGoal(@Param('id', ParseIntPipe) id: number) {
+    return this.savingsGoalsService.deleteSavingsGoal(id);
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { RecurringPaymentsService } from './recurring_payments.service';
 import { CreateRecurringPaymentDto } from './dto/create-recurring_payment.dto';
 import { UpdateRecurringPaymentDto } from './dto/update-recurring_payment.dto';
@@ -8,27 +8,27 @@ export class RecurringPaymentsController {
   constructor(private readonly recurringPaymentsService: RecurringPaymentsService) {}
 
   @Post()
-  create(@Body() createRecurringPaymentDto: CreateRecurringPaymentDto) {
-    return this.recurringPaymentsService.create(createRecurringPaymentDto);
+  createRecurringPayment(@Body() newRecurringPayment: CreateRecurringPaymentDto) {
+    return this.recurringPaymentsService.createRecurringPayment(newRecurringPayment);
   }
 
   @Get()
-  findAll() {
-    return this.recurringPaymentsService.findAll();
+  getRecurringPayments() {
+    return this.recurringPaymentsService.getRecurringPayments();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.recurringPaymentsService.findOne(+id);
+  getRecurringPayment(@Param('id', ParseIntPipe) id: number) {
+    return this.recurringPaymentsService.getRecurringPayment(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRecurringPaymentDto: UpdateRecurringPaymentDto) {
-    return this.recurringPaymentsService.update(+id, updateRecurringPaymentDto);
+  updateRecurringPayment(@Param('id', ParseIntPipe) id: number, @Body() recurringPayment: UpdateRecurringPaymentDto) {
+    return this.recurringPaymentsService.updateRecurringPayment(id, recurringPayment);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.recurringPaymentsService.remove(+id);
+  deleteRecurringPayment(@Param('id', ParseIntPipe) id: number) {
+    return this.recurringPaymentsService.deleteRecurringPayment(id);
   }
 }

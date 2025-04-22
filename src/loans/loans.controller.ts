@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { LoansService } from './loans.service';
 import { CreateLoanDto } from './dto/create-loan.dto';
 import { UpdateLoanDto } from './dto/update-loan.dto';
@@ -8,27 +8,27 @@ export class LoansController {
   constructor(private readonly loansService: LoansService) {}
 
   @Post()
-  create(@Body() createLoanDto: CreateLoanDto) {
-    return this.loansService.create(createLoanDto);
+  createLoan(@Body() newLoan: CreateLoanDto) {
+    return this.loansService.createLoan(newLoan);
   }
 
   @Get()
-  findAll() {
-    return this.loansService.findAll();
+  getLoans() {
+    return this.loansService.getLoans();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.loansService.findOne(+id);
+  getLoan(@Param('id', ParseIntPipe) id: number) {
+    return this.loansService.getLoan(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLoanDto: UpdateLoanDto) {
-    return this.loansService.update(+id, updateLoanDto);
+  updateLoan(@Param('id', ParseIntPipe) id: number, @Body() loan: UpdateLoanDto) {
+    return this.loansService.updateLoan(id, loan);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.loansService.remove(+id);
+  deleteLoan(@Param('id', ParseIntPipe) id: number) {
+    return this.loansService.deleteLoan(id);
   }
 }

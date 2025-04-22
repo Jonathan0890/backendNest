@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Res, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { Response } from 'express';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { join } from 'path';
 import { createReadStream } from 'fs';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 
 @Controller('files')

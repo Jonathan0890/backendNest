@@ -46,8 +46,7 @@ export class SubjectService {
       throw new HttpException('Subject not found', HttpStatus.NOT_FOUND);
     }
     const updateSubject = Object.assign(subjectFound, subject);
-    await this.subjectRepository.save(updateSubject);
-    return ;
+    return this.subjectRepository.save(updateSubject);
   }
 
   async deleteSubject(id: number) {

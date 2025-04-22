@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { BankAccountsService } from './bank_accounts.service';
 import { CreateBankAccountDto } from './dto/create-bank_account.dto';
 import { UpdateBankAccountDto } from './dto/update-bank_account.dto';
@@ -8,27 +8,27 @@ export class BankAccountsController {
   constructor(private readonly bankAccountsService: BankAccountsService) {}
 
   @Post()
-  create(@Body() createBankAccountDto: CreateBankAccountDto) {
-    return this.bankAccountsService.create(createBankAccountDto);
+  createBankAccount(@Body() newBankAccount: CreateBankAccountDto) {
+    return this.bankAccountsService.createBankAccount(newBankAccount);
   }
 
   @Get()
-  findAll() {
-    return this.bankAccountsService.findAll();
+  getBankAccounts() {
+    return this.bankAccountsService.getBankAccounts();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.bankAccountsService.findOne(+id);
+  getBankAccount(@Param('id', ParseIntPipe) id: number) {
+    return this.bankAccountsService.getBankAccount(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBankAccountDto: UpdateBankAccountDto) {
-    return this.bankAccountsService.update(+id, updateBankAccountDto);
+  updateBankAccount(@Param('id', ParseIntPipe) id: number, @Body() bankAccount: UpdateBankAccountDto) {
+    return this.bankAccountsService.updateBankAccount(id, bankAccount);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.bankAccountsService.remove(+id);
+  deleteBankAccount(@Param('id', ParseIntPipe) id: number) {
+    return this.bankAccountsService.deleteBankAccount(id);
   }
 }

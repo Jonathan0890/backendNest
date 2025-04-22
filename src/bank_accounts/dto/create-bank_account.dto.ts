@@ -1,1 +1,4 @@
-export class CreateBankAccountDto {}
+export class CreateBankAccountDto {
+    accountType: string;
+    account_Number: string
+}
