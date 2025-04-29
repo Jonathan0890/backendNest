@@ -6,7 +6,7 @@ export class RecurringPayment {
     @PrimaryGeneratedColumn()
     id: number
     
-    @Column({ type: 'dec'})
+    @Column({ type: 'decimal'})
     amount: number
 
     @Column({ length: 255 })

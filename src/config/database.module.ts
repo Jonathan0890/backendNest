@@ -21,7 +21,7 @@ import { MongooseModule } from '@nestjs/mongoose';
                 password: configService.get<string>('database.mysql.password'),
                 database: configService.get<string>('database.mysql.database'),
                 username: configService.get<string>('database.mysql.username'),
-                entities: ['dist/**/*.entity{.ts,.js}'],
+                entities: [__dirname + '/../**/*.entity.{ts,js}'],
                 synchronize: true,
                 name: 'mysqlConnection',
             }),
@@ -37,7 +37,7 @@ import { MongooseModule } from '@nestjs/mongoose';
                 password: configService.get<string>('database.postgres.password'),
                 database: configService.get<string>('database.postgres.database'),
                 username: configService.get<string>('database.postgres.username'),
-                entities: ['dist/**/*.entity{.ts,.js}'],
+                entities: [__dirname + '/../**/*.entity.{ts,js}'],
                 synchronize: true,
                 name: 'postgresConnection',
             }),
@@ -47,11 +47,10 @@ import { MongooseModule } from '@nestjs/mongoose';
             imports: [ConfigModule],
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => ({
-                uri: configService.get<string>('database.mongodb.uri'),
-                connectionName: 'mongodbConnection',
+                uri: configService.get<string>('database.mongo.uri'),
+                //connectionName: 'mongodbConnection',
             }),
         }),
-
     ],
 })
 export class DatabaseModule { }

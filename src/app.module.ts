@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { AuthModule } from './auth/auth.module';
@@ -31,19 +30,12 @@ import { RemindersModule } from './reminders/reminders.module';
 import { SummaryModule } from './summary/summary.module';
 import { ExchangeRatesModule } from './exchange_rates/exchange_rates.module';
 import { MonthlyGoalsModule } from './monthly_goals/monthly_goals.module';
+import { DatabaseModule } from './config/database.module';
+import { PetsModule } from './pets/pets.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '',
-      database: 'test',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true,
-    }),
+    DatabaseModule,
     UsersModule,
     PostsModule,
     AuthModule,
@@ -72,6 +64,7 @@ import { MonthlyGoalsModule } from './monthly_goals/monthly_goals.module';
     SummaryModule,
     ExchangeRatesModule,
     MonthlyGoalsModule,
+    PetsModule,
   ],
   controllers: [AppController],
   providers: [AppService,  LoggerService ],

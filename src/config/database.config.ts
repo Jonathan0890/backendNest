@@ -12,7 +12,7 @@ export default registerAs('database', () => ({
         host: process.env.POSTGRES_HOST || 'localhost',
         port: parseInt(process.env.POSTGRES_PORT || '5432', 10),
         username: process.env.POSTGRES_USER || 'postgres',
-        password: process.env.POSTGRES_PASSWORD || '',
+        password: process.env.POSTGRES_PASSWORD || '1834',
         database: process.env.POSTGRES_DATABASE || 'mibasededatos',
     },
     mongo: {
