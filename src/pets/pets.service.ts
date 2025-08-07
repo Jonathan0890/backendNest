@@ -1,49 +1,110 @@
-import { Injectable } from '@nestjs/common';
-//import { CreatePetDto } from './dto/create-pet.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Dog } from './entities/dog.entity';
 import { Repository } from 'typeorm';
-import { Cat } from './entities/cat.entity';
-import { InjectModel } from '@nestjs/mongoose';
-import { MedicalRecord } from './schemas/medical-record.schema';
-import { Model } from 'mongoose';
-//import { UpdatePetDto } from './dto/update-pet.dto';
+import { Pet } from './entities/pet.entity';
+import { User } from 'src/users/entities/user.entity';
+import { MedicalRecord } from './entities/medical-record.entity';
+import { Observation } from './entities/observation.entity';
+import { CreatePetDto } from './dto/create-pet.dto';
+import { UpdatePetDto } from './dto/update-pet.dto';
+import { CreateObservationDto } from './dto/create-observation.dto';
+import { UpdateObservationDto } from './dto/update-observation.dto';
+import { UpdateMedicalRecordDto } from './dto/update-medical-record.dto';
+import { CreateMedicalRecordDto } from './dto/create-medical-record.dto';
+
 
 @Injectable()
 export class PetsService {
-
   constructor(
-    @InjectRepository(Dog) private dogRepository: Repository<Dog>,
-    @InjectRepository(Cat) private catRepository: Repository<Cat>,
-    @InjectModel(MedicalRecord.name) private medicalRecordModel: Model<MedicalRecord>,
-  ) {}
-  
-  async createDog(dogData: Partial<Dog>) {
-    return await this.dogRepository.save(dogData);
-  }
+    @InjectRepository(Pet) private petRepo: Repository<Pet>,
+    @InjectRepository(User) private userRepo: Repository<User>,
+    @InjectRepository(MedicalRecord) private mrRepo: Repository<MedicalRecord>,
+    @InjectRepository(Observation) private obsRepo: Repository<Observation>,
+  ) { }
 
-  async createMedicalRecord(recordData: Partial<MedicalRecord>) {
-    const newRecord = new this.medicalRecordModel(recordData);
-    return await newRecord.save();
-  }
+  // CRUD Pet
+  async create(createDto: CreatePetDto) {
+    const owner = await this.userRepo.findOneBy({ id: createDto.ownerId });
+    if (!owner) throw new NotFoundException('Owner not found');
 
-  /*async create(createPetDto: CreatePetDto) {
-    return 'This action adds a new pet';
+    const pet = this.petRepo.create({ ...createDto, owner });
+    return this.petRepo.save(pet);
   }
 
   findAll() {
-    return `This action returns all pets`;
+    return this.petRepo.find({ relations: ['medicalRecords'] });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} pet`;
+  async findOne(id: number) {
+    const pet = await this.petRepo.findOne({ where: { id }, relations: ['owner', 'medicalRecords'] });
+    if (!pet) throw new NotFoundException('Pet not found');
+    return pet;
   }
 
-  update(id: number, updatePetDto: UpdatePetDto) {
-    return `This action updates a #${id} pet`;
+  async update(id: number, updateDto: UpdatePetDto) {
+    const pet = await this.findOne(id);
+    Object.assign(pet, updateDto);
+    return this.petRepo.save(pet);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} pet`;
-  }*/
+  async remove(id: number) {
+    const pet = await this.findOne(id);
+    return this.petRepo.remove(pet);
+  }
+
+  // CRUD MedicalRecord
+  async createMedicalRecord(dto: CreateMedicalRecordDto) {
+    const pet = await this.petRepo.findOneBy({ id: dto.petId });
+    if (!pet) throw new NotFoundException('Pet not found');
+    const record = this.mrRepo.create({ ...dto, pet });
+    return this.mrRepo.save(record);
+  }
+
+  findAllMedicalRecords() {
+    return this.mrRepo.find({ relations: ['pet'] });
+  }
+
+  async updateMedicalRecord(id: number, dto: UpdateMedicalRecordDto) {
+    const record = await this.mrRepo.findOneBy({ id });
+    if (!record) throw new NotFoundException('Record not found');
+    Object.assign(record, dto);
+    return this.mrRepo.save(record);
+  }
+
+  async deleteMedicalRecord(id: number) {
+    const record = await this.mrRepo.findOneBy({ id });
+    if (!record) throw new NotFoundException('Record not found');
+    return this.mrRepo.remove(record);
+  }
+
+  // CRUD Observation
+  async createObservation(dto: CreateObservationDto) {
+    const record = await this.mrRepo.findOneBy({ id: dto.medicalRecordId });
+    if (!record) throw new NotFoundException('Medical Record not found');
+
+    const obs = this.obsRepo.create({
+      note: dto.description,
+      pet: record.pet,
+    });
+
+    return this.obsRepo.save(obs);
+  }
+
+
+  findAllObservations() {
+    return this.obsRepo.find({ relations: ['medicalRecord'] });
+  }
+
+  async updateObservation(id: number, dto: UpdateObservationDto) {
+    const obs = await this.obsRepo.findOneBy({ id });
+    if (!obs) throw new NotFoundException('Observation not found');
+    Object.assign(obs, dto);
+    return this.obsRepo.save(obs);
+  }
+
+  async deleteObservation(id: number) {
+    const obs = await this.obsRepo.findOneBy({ id });
+    if (!obs) throw new NotFoundException('Observation not found');
+    return this.obsRepo.remove(obs);
+  }
 }

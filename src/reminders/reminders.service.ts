@@ -28,8 +28,8 @@ export class RemindersService {
     return this.reminderRepository.save(newReminder);
   }
 
-  getReminders() {
-    return `This action returns all reminders`;
+  async getReminders() {
+    return await this.reminderRepository.find();
   }
 
   async getReminder(id: number) {

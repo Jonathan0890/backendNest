@@ -2,22 +2,19 @@ import { Module } from '@nestjs/common';
 import { PetsService } from './pets.service';
 import { PetsController } from './pets.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MongooseModule } from '@nestjs/mongoose';
-import { Dog } from './entities/dog.entity';
-import { Cat } from './entities/cat.entity';
-import { Observation, ObservationSchema } from './schemas/observation.schema';
-import { MedicalRecord, MedicalRecordSchema } from './schemas/medical-record.schema';
+import { MedicalRecord } from './entities/medical-record.entity';
+import { User } from 'src/users/entities/user.entity';
+import { Observation } from './entities/observation.entity';
+import { Pet } from './entities/pet.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ Dog, Cat]),
-    MongooseModule.forFeature([
-      { name: MedicalRecord.name, schema: ObservationSchema },
-      { name: Observation.name, schema: MedicalRecordSchema }
-    ])
+    TypeOrmModule.forFeature([
+      Pet, MedicalRecord, User, Observation]
+    ),
   ],
   controllers: [PetsController],
   providers: [PetsService],
   exports: [PetsService]
 })
-export class PetsModule {}
+export class PetsModule { }

@@ -16,6 +16,7 @@ import { RecurringPayment } from "src/recurring_payments/entities/recurring_paym
 import { MonthlyGoal } from "src/monthly_goals/entities/monthly_goal.entity";
 import { SavingsGoal } from "src/savings_goals/entities/savings_goal.entity";
 import { Summary } from "src/summary/entities/summary.entity";
+import { Pet } from "src/pets/entities/pet.entity";
 
 @Entity({ name: 'users' })
 export class User {
@@ -63,7 +64,8 @@ export class User {
     @OneToMany(() => Contact, contact => contact.receiver) 
     receivedMessages: Contact [];
 
-
+    @OneToMany(() => Pet, pet => pet.owner)
+    pets: Pet[];
     //Parte de otro fronten de angular
 
     @OneToMany(()=> BankAccount, account => account.user)

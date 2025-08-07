@@ -23,11 +23,12 @@ import { Reminder } from 'src/reminders/entities/reminder.entity';
 import { RecurringPayment } from 'src/recurring_payments/entities/recurring_payment.entity';
 import { SavingsGoal } from 'src/savings_goals/entities/savings_goal.entity';
 import { Summary } from 'src/summary/entities/summary.entity';
+import { Pet } from 'src/pets/entities/pet.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      User, Profile, Role, Group, Evaluation, Attendance, Report, Contact,
+      User, Profile, Role, Group, Evaluation, Attendance, Report, Contact, Pet,
       BankAccount, Budget, Currency, ExchangeRate, ExpenseCategory, Investment,
       Loan, MonthlyGoal, Reminder, RecurringPayment, SavingsGoal, Summary, Transaction
     ]),
