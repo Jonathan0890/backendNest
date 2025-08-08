@@ -1,3 +1,4 @@
+// src/seeder/seerder.service.ts
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -66,7 +67,7 @@ export class SeerderService {
     ) { }
 
     async seed() {
-        // Crear roles si no existen
+        // ---------- Roles ----------
         const roles = (await this.roleRepo.count())
             ? await this.roleRepo.find()
             : await this.roleRepo.save([
@@ -80,7 +81,7 @@ export class SeerderService {
                 this.roleRepo.create({ name: 'Employee' }),
             ]);
 
-        // Crear grados (Grades)
+        // ---------- Grades ----------
         const grades = (await this.gradeRepo.count())
             ? await this.gradeRepo.find()
             : await this.gradeRepo.save([
@@ -89,31 +90,19 @@ export class SeerderService {
                 this.gradeRepo.create({ name: 'Grade 3' }),
             ]);
 
-        // Crear grupos (Groups) con asignación directa a un grade (ManyToOne)
+        // ---------- Groups (ManyToOne -> Grade) ----------
         const groups = (await this.groupRepo.count())
             ? await this.groupRepo.find()
             : await Promise.all([
                 this.groupRepo.save(this.groupRepo.create({ name: 'Group A', grade: grades[0] })),
                 this.groupRepo.save(this.groupRepo.create({ name: 'Group B', grade: grades[1] })),
-                this.groupRepo.save(this.groupRepo.create({ name: 'Group C', grade: grades[0] })),
-                this.groupRepo.save(this.groupRepo.create({ name: 'Group D', grade: grades[1] })),
-                this.groupRepo.save(this.groupRepo.create({ name: 'Group E', grade: grades[0] })),
-                this.groupRepo.save(this.groupRepo.create({ name: 'Group F', grade: grades[1] })),
-                this.groupRepo.save(this.groupRepo.create({ name: 'Group G', grade: grades[0] })),
-                this.groupRepo.save(this.groupRepo.create({ name: 'Group H', grade: grades[1] })),
-                this.groupRepo.save(this.groupRepo.create({ name: 'Group I', grade: grades[0] })),
-                this.groupRepo.save(this.groupRepo.create({ name: 'Group J', grade: grades[1] })),
-                this.groupRepo.save(this.groupRepo.create({ name: 'Group K', grade: grades[0] })),
-                this.groupRepo.save(this.groupRepo.create({ name: 'Group L', grade: grades[1] })),
-                this.groupRepo.save(this.groupRepo.create({ name: 'Group M', grade: grades[0] })),
-                this.groupRepo.save(this.groupRepo.create({ name: 'Group N', grade: grades[1] })),
-                this.groupRepo.save(this.groupRepo.create({ name: 'Group O', grade: grades[0] })),
-                this.groupRepo.save(this.groupRepo.create({ name: 'Group P', grade: grades[1] })),
-                this.groupRepo.save(this.groupRepo.create({ name: 'Group Q', grade: grades[0] })),
-                this.groupRepo.save(this.groupRepo.create({ name: 'Group R', grade: grades[1] })),
+                this.groupRepo.save(this.groupRepo.create({ name: 'Group C', grade: grades[2] })),
+                this.groupRepo.save(this.groupRepo.create({ name: 'Group D', grade: grades[0] })),
+                this.groupRepo.save(this.groupRepo.create({ name: 'Group E', grade: grades[1] })),
+                this.groupRepo.save(this.groupRepo.create({ name: 'Group F', grade: grades[2] })),
             ]);
 
-        // Crear asignaturas (Subjects)
+        // ---------- Subjects ----------
         const subjects = (await this.subjectRepo.count())
             ? await this.subjectRepo.find()
             : await this.subjectRepo.save([
@@ -123,17 +112,9 @@ export class SeerderService {
                 this.subjectRepo.create({ name: 'History', group: groups[1] }),
                 this.subjectRepo.create({ name: 'Art', group: groups[0] }),
                 this.subjectRepo.create({ name: 'Music', group: groups[1] }),
-                this.subjectRepo.create({ name: 'Physical Education', group: groups[0] }),
-                this.subjectRepo.create({ name: 'Social Studies', group: groups[1] }),
-                this.subjectRepo.create({ name: 'Geography', group: groups[0] }),
-                this.subjectRepo.create({ name: 'Chemistry', group: groups[1] }),
-                this.subjectRepo.create({ name: 'Biology', group: groups[0] }),
-                this.subjectRepo.create({ name: 'Physics', group: groups[1] }),
-                this.subjectRepo.create({ name: 'History', group: groups[0] }),
-                this.subjectRepo.create({ name: 'Geography', group: groups[1] }),
             ]);
 
-        // Crear horarios (Schedules)
+        // ---------- Schedules ----------
         const schedules = (await this.scheduleRepo.count())
             ? await this.scheduleRepo.find()
             : await this.scheduleRepo.save([
@@ -144,7 +125,7 @@ export class SeerderService {
                 this.scheduleRepo.create({ day: 'Friday', group: groups[0], subject: subjects[0], startTime: '17:00', endTime: '18:00' }),
             ]);
 
-        // Crear categorías de gastos
+        // ---------- Expense categories ----------
         const categories = (await this.expenseCategoryRepo.count())
             ? await this.expenseCategoryRepo.find()
             : await this.expenseCategoryRepo.save([
@@ -153,8 +134,35 @@ export class SeerderService {
                 this.expenseCategoryRepo.create({ category_name: 'Entertainment' }),
             ]);
 
+        // ---------- Currencies & exchange rates ----------
+        if ((await this.currencyRepo.count()) === 0) {
+            await this.currencyRepo.save([
+                this.currencyRepo.create({ currency_code: 'USD', currency_name: 'US Dollar' }),
+                this.currencyRepo.create({ currency_code: 'EUR', currency_name: 'Euro' }),
+                this.currencyRepo.create({ currency_code: 'MXN', currency_name: 'Peso MXN' }),
+            ]);
+        }
+
+        if ((await this.exchangeRateRepo.count()) === 0) {
+            await this.exchangeRateRepo.save(
+                this.exchangeRateRepo.create({
+                    base_currency: 'USD',
+                    target_currency: 'MXN',
+                    rate: 18.5,
+                }),
+            );
+            await this.exchangeRateRepo.save(
+                this.exchangeRateRepo.create({
+                    base_currency: 'EUR',
+                    target_currency: 'USD',
+                    rate: 1.08,
+                }),
+            );
+        }
+
+        // ---------- Loop principal para crear usuarios y recursos relacionados ----------
         for (let i = 0; i < 10; i++) {
-            // Crear perfil
+            // Profile
             const profile = await this.profileRepo.save(
                 this.profileRepo.create({
                     firstname: faker.person.firstName(),
@@ -163,10 +171,10 @@ export class SeerderService {
                 }),
             );
 
-            // Crear usuario
+            // User (nota: faker.internet.username() es la forma actual)
             const user = await this.userRepo.save(
                 this.userRepo.create({
-                    username: faker.internet.userName(),
+                    username: faker.internet.username(),
                     password: faker.internet.password(),
                     profile,
                     roles: [faker.helpers.arrayElement(roles)],
@@ -174,7 +182,7 @@ export class SeerderService {
                 }),
             );
 
-            // Mascotas
+            // Pet
             await this.petRepo.save(
                 this.petRepo.create({
                     name: faker.animal.dog(),
@@ -187,7 +195,7 @@ export class SeerderService {
                 }),
             );
 
-            // Cuenta bancaria
+            // Bank account
             const account = await this.bankAccountRepo.save(
                 this.bankAccountRepo.create({
                     account_Number: faker.finance.accountNumber(),
@@ -196,7 +204,7 @@ export class SeerderService {
                 }),
             );
 
-            // Transacción
+            // Transaction
             await this.transactionRepo.save(
                 this.transactionRepo.create({
                     account,
@@ -206,7 +214,7 @@ export class SeerderService {
                 }),
             );
 
-            // Evaluación
+            // Evaluation
             await this.evaluationRepo.save(
                 this.evaluationRepo.create({
                     value: faker.number.int({ min: 0, max: 100 }),
@@ -216,7 +224,7 @@ export class SeerderService {
                 }),
             );
 
-            // Asistencia
+            // Attendance
             await this.attendanceRepo.save(
                 this.attendanceRepo.create({
                     present: faker.datatype.boolean(),
@@ -225,7 +233,7 @@ export class SeerderService {
                 }),
             );
 
-            // Reporte
+            // Report
             await this.reportRepo.save(
                 this.reportRepo.create({
                     issue: faker.lorem.words(3),
@@ -234,7 +242,7 @@ export class SeerderService {
                 }),
             );
 
-            // Préstamo
+            // Loan
             await this.loanRepo.save(
                 this.loanRepo.create({
                     user,
@@ -245,7 +253,7 @@ export class SeerderService {
                 }),
             );
 
-            // Inversión
+            // Investment
             await this.investmentRepo.save(
                 this.investmentRepo.create({
                     user,
@@ -254,7 +262,7 @@ export class SeerderService {
                 }),
             );
 
-            // Metas mensuales
+            // MonthlyGoal
             await this.monthlyGoalRepo.save(
                 this.monthlyGoalRepo.create({
                     user,
@@ -265,7 +273,7 @@ export class SeerderService {
                 }),
             );
 
-            // Metas de ahorro
+            // SavingsGoal
             await this.savingsGoalRepo.save(
                 this.savingsGoalRepo.create({
                     user,
@@ -276,7 +284,7 @@ export class SeerderService {
                 }),
             );
 
-            // Resumen
+            // Summary
             await this.summaryRepo.save(
                 this.summaryRepo.create({
                     user,
@@ -287,7 +295,7 @@ export class SeerderService {
                 }),
             );
 
-            // Recordatorios
+            // Reminder
             await this.reminderRepo.save(
                 this.reminderRepo.create({
                     user,
@@ -298,7 +306,7 @@ export class SeerderService {
                 }),
             );
 
-            // Pagos recurrentes
+            // RecurringPayment
             await this.recurringPaymentRepo.save(
                 this.recurringPaymentRepo.create({
                     user,
@@ -308,7 +316,7 @@ export class SeerderService {
                 }),
             );
 
-            // Contactos
+            // Contacts (opcional)
             const receiver = await this.userRepo.findOne({ where: { id: 1 } });
             if (receiver && receiver.id !== user.id) {
                 await this.contactRepo.save(
@@ -320,7 +328,7 @@ export class SeerderService {
                 );
             }
 
-            // Posts
+            // Post
             await this.postRepo.save(
                 this.postRepo.create({
                     title: faker.lorem.words(3),
@@ -329,7 +337,7 @@ export class SeerderService {
                 }),
             );
 
-            // Presupuesto
+            // Budget
             await this.budgetRepo.save(
                 this.budgetRepo.create({
                     user,
