@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import  cookieParser from 'cookie-parser';
 import session from 'express-session';
+import { SeerderService } from './seeder/seerder.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -27,7 +28,8 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     })
   );
-  
+  const seeder = app.get(SeerderService);
+  await seeder.seed();
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap().catch((err) => {

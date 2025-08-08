@@ -32,10 +32,12 @@ import { ExchangeRatesModule } from './exchange_rates/exchange_rates.module';
 import { MonthlyGoalsModule } from './monthly_goals/monthly_goals.module';
 import { DatabaseModule } from './config/database.module';
 import { PetsModule } from './pets/pets.module';
+import { SeederModule } from './seeder/seeder.module';
 
 @Module({
   imports: [
     DatabaseModule,
+    SeederModule,
     UsersModule,
     PostsModule,
     AuthModule,

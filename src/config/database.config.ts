@@ -6,7 +6,7 @@ export default registerAs('database', () => ({
         port: parseInt(process.env.MYSQL_PORT || '3306', 10),
         username: process.env.MYSQL_USER || 'root',
         password: process.env.MYSQL_PASSWORD || '',
-        database: process.env.MYSQL_DATABASE || 'test',
+        database: process.env.MYSQL_DATABASE || '',
     },
     /*postgres: {
         host: process.env.POSTGRES_HOST || 'localhost',

@@ -10,9 +10,9 @@ export class Group {
     @Column({ unique: true })
     name: string
 
-    @ManyToMany(()=> Grade, grade => grade.groups)
-    grade: Grade ;
+    @ManyToMany(()=> Grade, (grade) => grade.groups, { cascade: true })
+    grade: Grade;
 
     @OneToMany(() => User, user => user.group)
-    users: User[]
+    users: User[];
 }
