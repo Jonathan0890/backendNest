@@ -30,6 +30,10 @@ import { Currency } from 'src/currencies/entities/currency.entity';
 import { ExchangeRate } from 'src/exchange_rates/entities/exchange_rate.entity';
 import { Budget } from 'src/budgets/entities/budget.entity';
 import { Report } from 'src/report/entities/report.entity';
+import { ShoppingCart } from 'src/shopping_cart/entities/shopping_cart.entity';
+import { PaymentGateway } from 'src/payment_gateway/entities/payment_gateway.entity';
+import { Promotion } from 'src/promotion/entities/promotion.entity';
+import { CategoryCatalog } from 'src/category_catalog/entities/category_catalog.entity';
 
 
 @Module({
@@ -39,7 +43,7 @@ import { Report } from 'src/report/entities/report.entity';
             BankAccount, Transaction, ExpenseCategory, Evaluation, Attendance,
             Report, Loan, Investment, MonthlyGoal, SavingsGoal, Summary,
             Reminder, RecurringPayment, Contact, Post, Schedule, Subject,
-            Currency, ExchangeRate, Budget, Report
+            Currency, ExchangeRate, Budget, Report, ShoppingCart, PaymentGateway, Promotion, CategoryCatalog
         ]),
     ],
     providers: [SeerderService],

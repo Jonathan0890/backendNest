@@ -33,6 +33,10 @@ import { MonthlyGoalsModule } from './monthly_goals/monthly_goals.module';
 import { DatabaseModule } from './config/database.module';
 import { PetsModule } from './pets/pets.module';
 import { SeederModule } from './seeder/seeder.module';
+import { ShoppingCartModule } from './shopping_cart/shopping_cart.module';
+import { CategoryCatalogModule } from './category_catalog/category_catalog.module';
+import { PaymentGatewayModule } from './payment_gateway/payment_gateway.module';
+import { PromotionModule } from './promotion/promotion.module';
 
 @Module({
   imports: [
@@ -67,6 +71,10 @@ import { SeederModule } from './seeder/seeder.module';
     ExchangeRatesModule,
     MonthlyGoalsModule,
     PetsModule,
+    ShoppingCartModule,
+    CategoryCatalogModule,
+    PaymentGatewayModule,
+    PromotionModule,
   ],
   controllers: [AppController],
   providers: [AppService,  LoggerService ],

@@ -17,6 +17,9 @@ import { MonthlyGoal } from "src/monthly_goals/entities/monthly_goal.entity";
 import { SavingsGoal } from "src/savings_goals/entities/savings_goal.entity";
 import { Summary } from "src/summary/entities/summary.entity";
 import { Pet } from "src/pets/entities/pet.entity";
+import { Promotion } from "src/promotion/entities/promotion.entity";
+import { PaymentGateway } from "src/payment_gateway/entities/payment_gateway.entity";
+import { ShoppingCart } from "src/shopping_cart/entities/shopping_cart.entity";
 
 @Entity({ name: 'users' })
 export class User {
@@ -66,6 +69,15 @@ export class User {
 
     @OneToMany(() => Pet, pet => pet.owner)
     pets: Pet[];
+
+    @OneToMany(() => Promotion, promotion => promotion.createBy)
+    promotions: Promotion[];
+
+    @OneToMany(() => PaymentGateway, gateway => gateway.user)
+    paymentGateways: PaymentGateway[];
+
+    @OneToMany(()=> ShoppingCart, cart => cart.user)
+    shoppingCarts: ShoppingCart [];
     //Parte de otro fronten de angular
 
     @OneToMany(()=> BankAccount, account => account.user)

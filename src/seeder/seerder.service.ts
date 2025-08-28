@@ -32,6 +32,10 @@ import { ExchangeRate } from 'src/exchange_rates/entities/exchange_rate.entity';
 import { Budget } from 'src/budgets/entities/budget.entity';
 import { Report } from 'src/report/entities/report.entity';
 import { Group } from 'src/group/entities/gruop.entity';
+import { PaymentGateway } from 'src/payment_gateway/entities/payment_gateway.entity';
+import { CategoryCatalog } from 'src/category_catalog/entities/category_catalog.entity';
+import { Promotion } from 'src/promotion/entities/promotion.entity';
+import { ShoppingCart } from 'src/shopping_cart/entities/shopping_cart.entity';
 
 @Injectable()
 export class SeerderService {
@@ -64,6 +68,10 @@ export class SeerderService {
         @InjectRepository(Currency) private currencyRepo: Repository<Currency>,
         @InjectRepository(ExchangeRate) private exchangeRateRepo: Repository<ExchangeRate>,
         @InjectRepository(Budget) private budgetRepo: Repository<Budget>,
+        @InjectRepository(PaymentGateway) private paymentGatewayRepo: Repository<PaymentGateway>,
+        @InjectRepository(CategoryCatalog) private categoryCatalogRepo: Repository<CategoryCatalog>,
+        @InjectRepository(Promotion) private promotionRepo: Repository<Promotion>,
+        @InjectRepository(ShoppingCart) private shoppingCartRepo: Repository<ShoppingCart>,
     ) { }
 
     async seed() {
@@ -160,6 +168,53 @@ export class SeerderService {
             );
         }
 
+        // Payment Gateways
+        if ((await this.paymentGatewayRepo.count()) === 0) {
+            await this.paymentGatewayRepo.save([
+                this.paymentGatewayRepo.create({
+                    providerName: 'Stripe',
+                    apiKey: 'sk_test_' + faker.string.alphanumeric(24),
+                    apiSecret: faker.string.alphanumeric(32),
+                }),
+                this.paymentGatewayRepo.create({
+                    providerName: 'PayPal',
+                    apiKey: 'pp_test_' + faker.string.alphanumeric(24),
+                    apiSecret: faker.string.alphanumeric(32),
+                }),
+            ]);
+        }
+
+        // Promotions y Category Catalogs
+        if ((await this.promotionRepo.count()) === 0) {
+            const promotions = await this.promotionRepo.save([
+                this.promotionRepo.create({
+                    title: 'Summer Sale',
+                    discountPercentage: 15.5,
+                    startDate: new Date('2024-06-01'),
+                    endDate: new Date('2024-08-31'),
+                }),
+                this.promotionRepo.create({
+                    title: 'Black Friday',
+                    discountPercentage: 30.0,
+                    startDate: new Date('2024-11-25'),
+                    endDate: new Date('2024-11-27'),
+                }),
+            ]);
+
+            await this.categoryCatalogRepo.save([
+                this.categoryCatalogRepo.create({
+                    name: 'Electronics',
+                    description: 'Electronic devices and accessories',
+                    promotion: promotions[0],
+                }),
+                this.categoryCatalogRepo.create({
+                    name: 'Clothing',
+                    description: 'Fashion and apparel',
+                    promotion: promotions[1],
+                }),
+            ]);
+        }
+
         // ---------- Loop principal para crear usuarios y recursos relacionados ----------
         for (let i = 0; i < 10; i++) {
             // Profile
@@ -178,7 +233,7 @@ export class SeerderService {
                     password: faker.internet.password(),
                     profile,
                     roles: [faker.helpers.arrayElement(roles)],
-                    group: faker.helpers.arrayElement(groups),
+                    group: faker.helpers.arrayElement(groups),           
                 }),
             );
 
@@ -344,6 +399,25 @@ export class SeerderService {
                     budget_name: faker.commerce.productName(),
                 }),
             );
+
+            // Shopping Cart
+            await this.shoppingCartRepo.save(
+                this.shoppingCartRepo.create({
+                    productName: faker.commerce.productName(),
+                    price: parseFloat(faker.commerce.price()),
+                    quantity: faker.number.int({ min: 1, max: 5 }),
+                    user: user,
+                }),
+            );
+
+            // Payment Gateway (asociar con usuario)
+            const paymentGateway = await this.paymentGatewayRepo.findOne({
+                where: { id: faker.number.int({ min: 1, max: 2 }) }
+            });
+            if (paymentGateway) {
+                paymentGateway.user = user;
+                await this.paymentGatewayRepo.save(paymentGateway);
+            }
         }
 
         console.log('✅ Seeding completed');
